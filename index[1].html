@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeoVibe - Tienda en Línea</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+    header {
+      background-color: #111;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1rem;
+      justify-content: center;
+    }
+    .producto {
+      background-color: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 200px;
+      text-align: center;
+    }
+    .producto button {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background-color: #111;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .producto button:hover {
+      background-color: #333;
+    }
+    #carrito {
+      background-color: #fff;
+      padding: 1rem;
+      border-top: 2px solid #eee;
+      margin: 1rem;
+      border-radius: 10px;
+      max-width: 600px;
+      margin: 1rem auto;
+    }
+    .item-carrito {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.5rem 0;
+    }
+    .eliminar {
+      background-color: crimson;
+      color: #fff;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .eliminar:hover {
+      background-color: darkred;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>NeoVibe - Tienda en Línea</h1>
+  </header>
+
+  <div class="container">
+    <div class="producto">
+      <h3>Gorra Retro</h3>
+      <p>$15.00</p>
+      <button class="agregar-carrito" data-nombre="Gorra Retro" data-precio="15">Agregar al carrito</button>
+    </div>
+    <div class="producto">
+      <h3>Camiseta Neo</h3>
+      <p>$25.00</p>
+      <button class="agregar-carrito" data-nombre="Camiseta Neo" data-precio="25">Agregar al carrito</button>
+    </div>
+    <div class="producto">
+      <h3>Llavero Minimal</h3>
+      <p>$5.00</p>
+      <button class="agregar-carrito" data-nombre="Llavero Minimal" data-precio="5">Agregar al carrito</button>
+    </div>
+  </div>
+
+  <div id="carrito">
+    <h2>Carrito de Compras</h2>
+    <div id="carrito-items"></div>
+    <p>Total: <span id="total">$0.00</span></p>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+      const contenedorCarrito = document.getElementById('carrito-items');
+      const totalCarrito = document.getElementById('total');
+      const botonesAgregar = document.querySelectorAll('.agregar-carrito');
+
+      function actualizarCarrito() {
+        contenedorCarrito.innerHTML = '';
+        let total = 0;
+
+        carrito.forEach((producto, index) => {
+          const item = document.createElement('div');
+          item.className = 'item-carrito';
+          item.innerHTML = `
+            <span>${producto.nombre} - $${producto.precio}</span>
+            <button class="eliminar" data-index="${index}">Eliminar</button>
+          `;
+          contenedorCarrito.appendChild(item);
+          total += producto.precio;
+        });
+
+        totalCarrito.textContent = `$${total.toFixed(2)}`;
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+      }
+
+      botonesAgregar.forEach(boton => {
+        boton.addEventListener('click', () => {
+          const nombre = boton.dataset.nombre;
+          const precio = parseFloat(boton.dataset.precio);
+
+          carrito.push({ nombre, precio });
+          actualizarCarrito();
+        });
+      });
+
+      contenedorCarrito.addEventListener('click', (e) => {
+        if (e.target.classList.contains('eliminar')) {
+          const index = e.target.dataset.index;
+          carrito.splice(index, 1);
+          actualizarCarrito();
+        }
+      });
+
+      actualizarCarrito();
+    });
+  </script>
+</body>
+</html>
